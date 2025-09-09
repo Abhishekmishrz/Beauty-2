@@ -11,6 +11,32 @@ export const authApi = apiSlice.injectEndpoints({
         method: "POST",
         body: data,
       }),
+      
+      async onQueryStarted(arg, { queryFulfilled, dispatch }) {
+        try {
+          const result = await queryFulfilled;
+          
+          if (result?.data?.data?.token && result?.data?.data?.user) {
+            Cookies.set(
+              "userInfo",
+              JSON.stringify({
+                accessToken: result.data.data.token,
+                user: result.data.data.user,
+              }),
+              { expires: 0.5 }
+            );
+
+            dispatch(
+              userLoggedIn({
+                accessToken: result.data.data.token,
+                user: result.data.data.user,
+              })
+            );
+          }
+        } catch (err) {
+          // do nothing
+        }
+      },
     }),
     // signUpProvider
     signUpProvider: builder.mutation({

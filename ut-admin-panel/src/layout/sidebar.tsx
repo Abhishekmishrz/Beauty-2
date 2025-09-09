@@ -41,16 +41,12 @@ export default function Sidebar({sideMenu,setSideMenu}:IProps) {
         <div className="flex flex-col justify-between h-full">
           <div >
 
-            <div className="py-4 pb-8 px-8 border-b border-gray h-[78px]">
-              <Link href="/dashboard">
-                <Image
-                  className="w-[140px]"
-                  width={140}
-                  height={43}
-                  src="/assets/img/logo/logo.svg"
-                  alt="logo"
-                  priority
-                />
+            <div className="py-4 pb-8 px-8 border-b border-gray h-[78px] flex items-center">
+              <Link href="/dashboard" className="flex items-center">
+                <div className="text-2xl font-bold text-orange-500">
+                  Urban Thali
+                </div>
+                <span className="ml-2 text-sm text-gray-500">Admin</span>
               </Link>
             </div>
             <div className="px-4 py-5">

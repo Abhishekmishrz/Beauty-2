@@ -11,35 +11,53 @@ exports.signup = async (req, res,next) => {
   try {
     const user = await User.findOne({ email: req.body.email });
     if (user) {
-      res.send({ status: "failed", message: "Email already exists" });
+      res.status(400).send({ status: "failed", message: "Email already exists" });
     } else {
       const saved_user = await User.create(req.body);
-      const token = saved_user.generateConfirmationToken();
+      
+      // Skip email verification in development mode
+      if (process.env.NODE_ENV === 'development') {
+        saved_user.status = 'active';
+        await saved_user.save({ validateBeforeSave: false });
+        
+        const token = generateToken(saved_user);
+        const { password: pwd, ...others } = saved_user.toObject();
+        
+        res.status(200).json({
+          status: "success",
+          message: "User registered successfully",
+          data: {
+            user: others,
+            token,
+          },
+        });
+      } else {
+        const token = saved_user.generateConfirmationToken();
+        await saved_user.save({ validateBeforeSave: false });
 
-      await saved_user.save({ validateBeforeSave: false });
-
-      const mailData = {
-        from: secret.email_user,
-        to: `${req.body.email}`,
-        subject: "Email Activation",
-        subject: "Verify Your Email",
-        html: `<h2>Hello ${req.body.name}</h2>
-        <p>Verify your email address to complete the signup and login into your <strong>shofy</strong> account.</p>
-  
-          <p>This link will expire in <strong> 10 minute</strong>.</p>
-  
-          <p style="margin-bottom:20px;">Click this link for active your account</p>
-  
-          <a href="${secret.client_url}/email-verify/${token}" style="background:#0989FF;color:white;border:1px solid #0989FF; padding: 10px 15px; border-radius: 4px; text-decoration:none;">Verify Account</a>
-  
-          <p style="margin-top: 35px;">If you did not initiate this request, please contact us immediately at support@shofy.com</p>
-  
-          <p style="margin-bottom:0px;">Thank you</p>
-          <strong>shofy Team</strong>
-           `,
-      };
-      const message = "Please check your email to verify!";
-      sendEmail(mailData, res, message);
+        const mailData = {
+          from: secret.email_user,
+          to: `${req.body.email}`,
+          subject: "Email Activation",
+          subject: "Verify Your Email",
+          html: `<h2>Hello ${req.body.name}</h2>
+          <p>Verify your email address to complete the signup and login into your <strong>shofy</strong> account.</p>
+    
+            <p>This link will expire in <strong> 10 minute</strong>.</p>
+    
+            <p style="margin-bottom:20px;">Click this link for active your account</p>
+    
+            <a href="${secret.client_url}/email-verify/${token}" style="background:#0989FF;color:white;border:1px solid #0989FF; padding: 10px 15px; border-radius: 4px; text-decoration:none;">Verify Account</a>
+    
+            <p style="margin-top: 35px;">If you did not initiate this request, please contact us immediately at support@shofy.com</p>
+    
+            <p style="margin-bottom:0px;">Thank you</p>
+            <strong>shofy Team</strong>
+             `,
+        };
+        const message = "Please check your email to verify!";
+        sendEmail(mailData, res, message);
+      }
     }
   } catch (error) {
     next(error)

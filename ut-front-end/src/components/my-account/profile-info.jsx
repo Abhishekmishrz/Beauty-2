@@ -21,7 +21,7 @@ const schema = Yup.object().shape({
 const ProfileInfo = () => {
   const { user } = useSelector((state) => state.auth);
 
-  const [updateProfile, {}] = useUpdateProfileMutation();
+  const [updateProfile, { isLoading }] = useUpdateProfileMutation();
   // react hook form
   const {register,handleSubmit,formState: { errors },reset} = useForm({
     resolver: yupResolver(schema),
@@ -109,7 +109,18 @@ const ProfileInfo = () => {
             </div>
             <div className="col-xxl-12">
               <div className="profile__btn">
-                <button type="submit" className="tp-btn">Update Profile</button>
+                <button 
+                  type="submit" 
+                  className="tp-btn"
+                  disabled={isLoading}
+                  style={{
+                    backgroundColor: isLoading ? '#ccc' : '#FCB53B',
+                    cursor: isLoading ? 'not-allowed' : 'pointer',
+                    opacity: isLoading ? 0.7 : 1,
+                  }}
+                >
+                  {isLoading ? 'Updating...' : 'Update Profile'}
+                </button>
               </div>
             </div>
           </div>

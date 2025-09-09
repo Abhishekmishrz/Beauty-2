@@ -28,7 +28,7 @@ const schemaTwo = Yup.object().shape({
 
 const ChangePassword = () => {
   const { user } = useSelector((state) => state.auth);
-  const [changePassword, {}] = useChangePasswordMutation();
+  const [changePassword, { isLoading }] = useChangePasswordMutation();
   // react hook form
   const {
     register,
@@ -115,8 +115,17 @@ const ChangePassword = () => {
           </div>
           <div className="col-xxl-6 col-md-6">
             <div className="profile__btn">
-              <button type="submit" className="tp-btn">
-                Update
+              <button 
+                type="submit" 
+                className="tp-btn"
+                disabled={isLoading}
+                style={{
+                  backgroundColor: isLoading ? '#ccc' : '#FCB53B',
+                  cursor: isLoading ? 'not-allowed' : 'pointer',
+                  opacity: isLoading ? 0.7 : 1,
+                }}
+              >
+                {isLoading ? 'Updating...' : 'Update Password'}
               </button>
             </div>
           </div>

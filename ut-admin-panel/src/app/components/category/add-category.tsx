@@ -47,9 +47,9 @@ const AddCategory = () => {
               error={error}
             />
 
-            {/* Product Type */}
+            {/* Food Category Type */}
             <div className="mb-6">
-              <p className="mb-0 text-base text-black">Product Type</p>
+              <p className="mb-0 text-base text-black">Food Category Type</p>
               <div className="category-add-select select-bordered">
                 <ProductType
                   setSelectProductType={setSelectProductType}
@@ -58,13 +58,13 @@ const AddCategory = () => {
                 />
               </div>
             </div>
-            {/* Product Type */}
+            {/* Food Category Type */}
 
             {/* Category Description */}
             <CategoryDescription register={register} />
             {/* Category Description */}
 
-            <button className="tp-btn px-7 py-2">Add Category</button>
+            <button className="tp-btn px-7 py-2">Add Food Category</button>
           </div>
         </form>
       </div>

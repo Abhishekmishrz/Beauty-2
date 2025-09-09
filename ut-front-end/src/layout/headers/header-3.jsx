@@ -14,8 +14,9 @@ import CartMiniSidebar from '@/components/common/cart-mini-sidebar';
 import useCartInfo from '@/hooks/use-cart-info';
 import { openCartMini } from '@/redux/features/cartSlice';
 import TopNavbar from './header-com/top-navbar';
+import UserDropdown from '@/components/common/user-dropdown';
 
-const HeaderThree = ({ hideAuthButtons = false, fixed = true, hideNavbar = false }) => {
+const HeaderThree = ({ fixed = true, hideNavbar = false }) => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isOffCanvasOpen, setIsCanvasOpen] = useState(false);
   const { wishlist } = useSelector((state) => state.wishlist);
@@ -26,23 +27,49 @@ const HeaderThree = ({ hideAuthButtons = false, fixed = true, hideNavbar = false
     return null;
   }
 
+  // Mobile responsive styles
+  const headerStyles = {
+    position: fixed ? 'fixed' : 'relative',
+    top: fixed ? '45px' : '0',
+    left: 0,
+    right: 0,
+    zIndex: fixed ? 999 : 'auto',
+    width: '100%',
+    minHeight: '60px',
+    backgroundColor: 'white',
+    boxShadow: sticky ? '0 2px 10px rgba(0,0,0,0.1)' : 'none'
+  };
+
+  const headerContentStyles = {
+    padding: '10px 15px',
+    '@media (min-width: 768px)': {
+      padding: '15px 30px'
+    }
+  };
+
   return (
     <>
       <header>
         {/* Top Navbar */}
         <TopNavbar />
         
-        <div id="header-sticky" className={`tp-header-area tp-header-style-transparent-white tp-header-transparent tp-header-sticky has-dark-logo tp-header-height ${sticky ? 'header-sticky' : ''}`} style={{ position: fixed ? 'fixed' : 'relative', top: fixed ? '45px' : '0', left: 0, right: 0, zIndex: fixed ? 999 : 'auto', width: '100%', height: '75px', minHeight: '75px' }}>
-          <div className="tp-header-bottom-3 pl-35 pr-35" style={{ height: '75px', display: 'flex', alignItems: 'center' }}>
+        <div id="header-sticky" className={`tp-header-area tp-header-style-transparent-white tp-header-transparent tp-header-sticky has-dark-logo tp-header-height ${sticky ? 'header-sticky' : ''}`} style={headerStyles}>
+          <div className="tp-header-bottom-3" style={{ padding: '10px 15px', minHeight: '60px', display: 'flex', alignItems: 'center' }}>
             <div className="container-fluid">
               <div className="row align-items-center">
-                <div className="col-xl-2 col-lg-2 col-6">
-                  <div className="logo" style={{ height: '70px', display: 'flex', alignItems: 'center' }}>
+                <div className="col-6 col-sm-4 col-lg-2">
+                  <div className="logo">
                     <Link href="/">
                       <Image 
                         src={urban_thali_logo} 
                         alt="Urban Thali Logo" 
-                        style={{ height: '70px', width: '180px' }} 
+                        style={{ 
+                          height: 'auto', 
+                          width: '100%', 
+                          maxWidth: '140px',
+                          maxHeight: '60px',
+                          objectFit: 'contain'
+                        }} 
                       />
                     </Link>
                   </div>
@@ -54,49 +81,27 @@ const HeaderThree = ({ hideAuthButtons = false, fixed = true, hideNavbar = false
                     </nav>
                   </div>
                 </div>
-                <div className="col-xl-2 col-lg-2 col-6">
-                  <div className="tp-header-action d-flex align-items-center justify-content-end ml-50" style={{ paddingTop: '8px' }}>
+                <div className="col-6 col-sm-8 col-lg-2">
+                  <div className="tp-header-action d-flex align-items-center justify-content-end">
+                    {/* Wishlist - visible on tablet and desktop */}
                     <div className="tp-header-action-item d-none d-sm-block">
+                      <Link href="/wishlist" className="tp-header-action-btn">
+                        <Wishlist />
+                        <span className="tp-header-action-badge">{wishlist.length}</span>
+                      </Link>
+                    </div>
+                    {/* Cart - visible on mobile, tablet and desktop */}
+                    <div className="tp-header-action-item">
                       <button onClick={() => dispatch(openCartMini())} type="button" className="tp-header-action-btn cartmini-open-btn">
                         <CartTwo />
                         <span className="tp-header-action-badge">{quantity}</span>
                       </button>
                     </div>
-                    {!hideAuthButtons && (
-                      <>
-                        <div className="tp-header-action-item d-none d-sm-block">
-                          <Link href="/login" className="tp-header-action-btn">
-                            Login
-                          </Link>
-                        </div>
-                        <div className="tp-header-action-item d-none d-sm-block">
-                          <Link 
-                            href="/register" 
-                            className="tp-header-action-btn tp-btn tp-btn-style-2"
-                            style={{
-                              backgroundColor: '#FCB53B',
-                              color: 'white',
-                              padding: '8px 20px',
-                              borderRadius: '6px',
-                              textDecoration: 'none',
-                              fontSize: '13px',
-                              fontWeight: '600',
-                              border: 'none',
-                              minWidth: '90px',
-                              textAlign: 'center',
-                              transition: 'all 0.3s ease',
-                              height: '36px',
-                              lineHeight: '20px',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center'
-                            }}
-                          >
-                            Sign Up
-                          </Link>
-                        </div>
-                      </>
-                    )}
+                    {/* User dropdown - visible on tablet and desktop */}
+                    <div className="tp-header-action-item d-none d-sm-block">
+                      <UserDropdown />
+                    </div>
+                    {/* Mobile menu button - visible on mobile and tablet */}
                     <div className="tp-header-action-item d-lg-none">
                       <button onClick={() => setIsCanvasOpen(true)} type="button" className="tp-header-action-btn tp-offcanvas-open-btn">
                         <Menu />

@@ -24,7 +24,7 @@ const schema = Yup.object().shape({
 
 const RegisterForm = () => {
   const [showPass, setShowPass] = useState(false);
-  const [registerUser, {}] = useRegisterUserMutation();
+  const [registerUser, { isLoading }] = useRegisterUserMutation();
   const dispatch = useDispatch();
   const router = useRouter();
   // react hook form
@@ -32,34 +32,40 @@ const RegisterForm = () => {
     resolver: yupResolver(schema),
   });
   // on submit
-  const onSubmit = (data) => {
-    // For demo purposes, simulate registration if no backend is available
-    if (!process.env.NEXT_PUBLIC_API_BASE_URL || process.env.NEXT_PUBLIC_API_BASE_URL === 'http://localhost:5000') {
-      // Simulate successful registration for demo
-      dispatch(demoLogin({
+  const onSubmit = async (data) => {
+    try {
+      const result = await registerUser({
         name: data.name,
         email: data.email,
-        id: 'demo-user-1'
-      }));
-      notifySuccess("Registration successful! (Demo mode)");
-      router.push('/');
-      reset();
-      return;
-    }
-
-    registerUser({
-      name: data.name,
-      email: data.email,
-      password: data.password,
-    }).then((result) => {
-      if (result?.error) {
-        notifyError("Register Failed");
-      } else {
-        notifySuccess(result?.data?.message);
-        router.push('/');
+        password: data.password,
+      });
+      
+      if (result?.data) {
+        notifySuccess(result?.data?.message || "Registration successful!");
+        router.push('/login');
+        reset();
+      } else if (result?.error) {
+        const errorMessage = result.error?.data?.message || 
+                           result.error?.data?.error || 
+                           "Registration failed. Email may already be in use.";
+        notifyError(errorMessage);
       }
-    });
-    reset();
+    } catch (error) {
+      console.error("Registration error:", error);
+      // Fallback to demo mode if API is unavailable
+      if (error.message?.includes('fetch')) {
+        dispatch(demoLogin({
+          name: data.name,
+          email: data.email,
+          id: 'demo-user-1'
+        }));
+        notifySuccess("Registration successful! (Demo mode)");
+        router.push('/');
+        reset();
+      } else {
+        notifyError("An error occurred. Please try again.");
+      }
+    }
   };
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -134,8 +140,23 @@ const RegisterForm = () => {
         </div>
       </div>
       <div className="tp-login-bottom">
-        <button type="submit" className="tp-login-btn w-100">
-          Sign Up
+        <button 
+          type="submit" 
+          className="tp-login-btn w-100"
+          disabled={isLoading}
+          style={{
+            backgroundColor: isLoading ? '#ccc' : '#FCB53B',
+            color: 'white',
+            border: 'none',
+            padding: '12px 24px',
+            borderRadius: '6px',
+            fontSize: '16px',
+            fontWeight: '600',
+            cursor: isLoading ? 'not-allowed' : 'pointer',
+            transition: 'all 0.3s ease'
+          }}
+        >
+          {isLoading ? 'Creating Account...' : 'Sign Up'}
         </button>
       </div>
     </form>

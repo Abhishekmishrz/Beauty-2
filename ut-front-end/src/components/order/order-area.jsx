@@ -21,7 +21,7 @@ const OrderArea = ({ orderId }) => {
     content = <ErrorMsg msg="There was an error" />;
   }
   if (!isLoading && !isError) {
-    const { name, country, city, contact, invoice, createdAt, cart, shippingCost, discount, totalAmount,paymentMethod} = order.order;
+    const { name, country, city, contact, invoice, createdAt, cart, shippingCost, discount, totalAmount, paymentMethod, status} = order.order;
     content = (
       <>
         <section className="invoice__area pt-120 pb-120">
@@ -30,7 +30,16 @@ const OrderArea = ({ orderId }) => {
               <div className="row">
                 <div className="col-xl-12">
                   <div className="invoice_msg mb-40">
-                    <p className="text-black alert alert-success">Thank you <strong>{name}</strong> Your order have been received ! </p>
+                    <p className="text-black alert alert-success">
+                      Thank you <strong>{name}</strong> Your order have been received! 
+                      <span className="float-end">
+                        Status: <strong style={{ textTransform: 'capitalize' }}>
+                          <span className={`badge ${status === 'delivered' ? 'bg-success' : status === 'processing' ? 'bg-warning' : status === 'cancel' ? 'bg-danger' : 'bg-info'}`}>
+                            {status}
+                          </span>
+                        </strong>
+                      </span>
+                    </p>
                   </div>
                 </div>
               </div>

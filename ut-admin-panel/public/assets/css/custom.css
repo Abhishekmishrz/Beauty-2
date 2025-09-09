@@ -76,6 +76,7 @@
     text-align: center;
     visibility: hidden;
     opacity: 0;
+    z-index: 1;
     color: #fff;
     -webkit-transition: all 0.2s 0s ease-out;
     -moz-transition: all 0.2s 0s ease-out;
@@ -387,4 +388,42 @@
     padding-left: 1.5rem;
     padding-right: 1.5rem;
     border: 1px solid#EFF2F5;
+}
+/* Fix for toast notification styles */
+.Toastify__toast-container {
+    z-index: 9999;
+}
+
+.Toastify__toast {
+    font-family: inherit;
+}
+
+/* Ensure check icons only appear in checkboxes */
+.tp-checkbox label::before {
+    display: none;
+}
+
+.tp-checkbox input:checked ~ label::before {
+    display: block;
+    visibility: visible;
+    opacity: 1;
+}
+
+/* Fix for any global pseudo-element issues */
+body::before,
+body::after {
+    content: none !important;
+    display: none !important;
+}
+
+/* Ensure ReactSelect dropdown doesn't cause issues */
+.css-1okebmr-indicatorSeparator {
+    display: none;
+}
+
+/* Fix status change dropdown checkmark */
+.react-select__option--is-selected::after {
+    content: "✓";
+    position: absolute;
+    right: 10px;
 }

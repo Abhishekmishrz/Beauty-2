@@ -34,11 +34,27 @@ const LoginForm = () => {
     resolver: yupResolver(schema),
   });
   // onSubmit
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     try {
-      // For demo purposes, simulate login if no backend is available
-      if (!process.env.NEXT_PUBLIC_API_BASE_URL || process.env.NEXT_PUBLIC_API_BASE_URL === 'http://localhost:5000') {
-        // Simulate successful login for demo
+      const result = await loginUser({
+        email: data.email,
+        password: data.password,
+      });
+      
+      if (result?.data) {
+        notifySuccess("Login successful!");
+        router.push('/');
+        reset();
+      } else if (result?.error) {
+        const errorMessage = result.error?.data?.message || 
+                           result.error?.data?.error || 
+                           "Invalid email or password";
+        notifyError(errorMessage);
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      // Fallback to demo mode if API is unavailable
+      if (error.message?.includes('fetch')) {
         dispatch(demoLogin({
           name: data.email.split('@')[0],
           email: data.email,
@@ -47,29 +63,9 @@ const LoginForm = () => {
         notifySuccess("Login successful! (Demo mode)");
         router.push('/');
         reset();
-        return;
+      } else {
+        notifyError("An error occurred. Please try again.");
       }
-
-      loginUser({
-        email: data.email,
-        password: data.password,
-      })
-        .then((result) => {
-          if (result?.data) {
-            notifySuccess("Login successfully");
-            router.push('/');
-          } else {
-            notifyError(result?.error?.data?.error || "Login failed");
-          }
-        })
-        .catch((error) => {
-          notifyError("Login failed. Please try again.");
-          console.error("Login error:", error);
-        });
-      reset();
-    } catch (error) {
-      console.error("Form submission error:", error);
-      notifyError("An error occurred. Please try again.");
     }
   };
   return (

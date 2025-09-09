@@ -14,6 +14,7 @@ import CartMiniSidebar from '@/components/common/cart-mini-sidebar';
 import { CartTwo, Compare, Facebook, Menu, PhoneTwo, Wishlist, Search } from '@/svg';
 import useSearchFormSubmit from '@/hooks/use-search-form-submit';
 import OffCanvas from '@/components/common/off-canvas';
+import UserDropdown from '@/components/common/user-dropdown';
 
 const HeaderTwo = ({ style_2 = false }) => {
   const { wishlist } = useSelector((state) => state.wishlist);
@@ -105,6 +106,9 @@ const HeaderTwo = ({ style_2 = false }) => {
                             <CartTwo />
                             <span className="tp-header-action-badge">{quantity}</span>
                           </button>
+                        </div>
+                        <div className="tp-header-action-item d-none d-sm-block">
+                          <UserDropdown />
                         </div>
                         <div className="tp-header-action-item tp-header-hamburger mr-20 d-xl-none">
                           <button onClick={() => setIsCanvasOpen(true)} type="button" className="tp-offcanvas-open-btn">

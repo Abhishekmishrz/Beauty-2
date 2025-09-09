@@ -10,6 +10,7 @@ import ProductImgUpload from "./product-img-upload";
 import ProductCategory from "../../category/product-category";
 import Tags from "./tags";
 import FormField from "../form-field";
+import FoodDetails from "./food-details";
 
 const ProductSubmit = () => {
   const {
@@ -44,11 +45,11 @@ const ProductSubmit = () => {
         {/* left side */}
         <div className="col-span-12 xl:col-span-8 2xl:col-span-9">
           <div className="mb-6 bg-white px-8 py-8 rounded-md">
-            <h4 className="text-[22px]">General</h4>
+            <h4 className="text-[22px]">General Information</h4>
             <FormField
-              title="title"
+              title="Dish Name"
               isRequired={true}
-              placeHolder="Product Title"
+              placeHolder="Enter dish name"
               register={register}
               errors={errors}
             />
@@ -122,6 +123,10 @@ const ProductSubmit = () => {
             </div>
           </div>
 
+          {/* Food Details start */}
+          <FoodDetails register={register} errors={errors} />
+          {/* Food Details end */}
+
           {/* product type and brands start */}
           <ProductTypeBrand
             register={register}
@@ -176,7 +181,7 @@ const ProductSubmit = () => {
         </div>
       </div>
       <button className="tp-btn px-5 py-2 mt-5" type="submit">
-        Submit Product
+        Add Menu Item
       </button>
     </form>
   );

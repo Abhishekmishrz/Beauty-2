@@ -16,6 +16,7 @@ import HeaderMainRight from "./header-com/header-main-right";
 import CartMiniSidebar from "@/components/common/cart-mini-sidebar";
 import HeaderSearchForm from "@/components/forms/header-search-form";
 import { CartTwo, CategoryMenu, Compare, Menu, Phone, ShippingCar, Wishlist } from "@/svg";
+import UserDropdown from "@/components/common/user-dropdown";
 
 const Header = () => {
   const { wishlist } = useSelector((state) => state.wishlist);
@@ -145,6 +146,9 @@ const Header = () => {
               </div>
               <div className="col-xl-3 col-lg-3 col-md-3 col-6">
                 <div className="tp-header-action d-flex align-items-center justify-content-end ml-50">
+                  <div className="tp-header-action-item d-none d-sm-block">
+                    <UserDropdown />
+                  </div>
                   <div className="tp-header-action-item d-none d-lg-block">
                     <Link href="/compare" className="tp-header-action-btn">
                       <Compare />

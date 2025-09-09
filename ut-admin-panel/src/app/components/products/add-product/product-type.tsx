@@ -58,10 +58,18 @@ const ProductType = ({
               handleSelectProduct(selectedOption?.value);
             }}
             options={[
-              { value: "electronics", label: "Electronics" },
-              { value: "fashion", label: "Fashion" },
-              { value: "beauty", label: "Beauty" },
-              { value: "jewelry", label: "Jewelry" },
+              { value: "appetizers", label: "Appetizers & Starters" },
+              { value: "main-course", label: "Main Course" },
+              { value: "breads", label: "Breads & Naan" },
+              { value: "rice-biryani", label: "Rice & Biryani" },
+              { value: "desserts", label: "Desserts" },
+              { value: "beverages", label: "Beverages" },
+              { value: "soups", label: "Soups" },
+              { value: "salads", label: "Salads" },
+              { value: "thali-combos", label: "Thali & Combos" },
+              { value: "street-food", label: "Street Food" },
+              { value: "breakfast", label: "Breakfast" },
+              { value: "snacks", label: "Snacks" },
             ]}
           />
         )}

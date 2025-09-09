@@ -39,10 +39,10 @@ const MyOrders = ({ orderData }) => {
                   {dayjs(item.createdAt).format("MMMM D, YYYY")}
                 </td>
                 <td
-                  data-info={`status ${item.status === "Pending" ? "pending" : ""}  ${item.status === "Processing" ? "hold" : ""}  ${item.status === "Delivered" ? "done" : ""}`}
-                  className={`status ${item.status === "Pending" ? "pending" : ""} ${item.status === "Processing" ? "hold" : ""}  ${item.status === "Delivered" ? "done" : ""}`}
+                  data-info={`status ${item.status === "pending" ? "pending" : ""}  ${item.status === "processing" ? "hold" : ""}  ${item.status === "delivered" ? "done" : ""} ${item.status === "cancel" ? "cancel" : ""}`}
+                  className={`status ${item.status === "pending" ? "pending" : ""} ${item.status === "processing" ? "hold" : ""}  ${item.status === "delivered" ? "done" : ""} ${item.status === "cancel" ? "cancel" : ""}`}
                 >
-                  {item.status}
+                  <span style={{ textTransform: 'capitalize' }}>{item.status}</span>
                 </td>
                 <td>
                   <Link href={`/order/${item._id}`} className="tp-logout-btn">
