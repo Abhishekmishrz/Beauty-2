@@ -1,10 +1,8 @@
 'use client'
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { ToastContainer } from "@/utils/toast";
-if (typeof window !== "undefined") {
-  require("bootstrap/dist/js/bootstrap");
-}
+import dynamic from 'next/dynamic';
+
 // internal
 import BackToTopCom from "@/components/common/back-to-top";
 import ProductModal from "@/components/common/product-modal/index";
@@ -13,6 +11,12 @@ import { get_wishlist_products } from "@/redux/features/wishlist-slice";
 import { get_compare_products } from "@/redux/features/compareSlice";
 import useAuthCheck from "@/hooks/use-auth-check";
 import Loader from "@/components/loader/loader";
+
+// Dynamic import of ToastContainer with no SSR
+const ToastContainer = dynamic(
+  () => import('@/components/toast-wrapper'),
+  { ssr: false }
+);
 
 const Wrapper = ({ children }) => {
   const { productItem } = useSelector((state) => state.productModal);
@@ -30,24 +34,15 @@ const Wrapper = ({ children }) => {
     <div
       className="d-flex align-items-center justify-content-center"
       style={{ height: "100vh" }}
+      suppressHydrationWarning
     >
       <Loader spinner="fade" loading={!authChecked} />
     </div>
   ) : (
-    <div id="wrapper">
+    <div id="wrapper" suppressHydrationWarning>
       {children}
       <BackToTopCom />
-      <ToastContainer
-        position="top-center"
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
+      <ToastContainer />
       {/* product modal start */}
       {productItem && <ProductModal />}
       {/* product modal end */}

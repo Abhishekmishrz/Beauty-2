@@ -1,6 +1,7 @@
 import './globals.scss';
 import {Jost, Roboto,Charm,Oregano} from 'next/font/google';
 import Providers from '@/components/provider';
+import SuppressHydrationWarning from '@/components/suppress-hydration-warning';
 
 export const metadata = {
   title: 'Urban Thali',
@@ -45,8 +46,9 @@ const charm = Charm({
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
-      <body className={`${body.variable} ${heading.variable} ${p.variable} ${jost.variable} ${roboto.variable} ${oregano.variable} ${charm.variable}`}>
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${body.variable} ${heading.variable} ${p.variable} ${jost.variable} ${roboto.variable} ${oregano.variable} ${charm.variable}`} suppressHydrationWarning>
+        <SuppressHydrationWarning />
         <Providers>
           {children}
         </Providers>
