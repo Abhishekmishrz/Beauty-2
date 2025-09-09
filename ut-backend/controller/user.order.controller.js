@@ -230,7 +230,17 @@ exports.getSalesReport = async (req, res,next) => {
 // Most Selling Category
 exports.mostSellingCategory = async (req, res,next) => {
   try {
-    const categoryData = await Order.aggregate([
+    // For demonstration, returning thali categories
+    // Remove this mock data and uncomment the actual query when you have real thali orders
+    const categoryData = [
+      { _id: "Veg Thali", count: 245 },
+      { _id: "Non-Veg Thali", count: 189 },
+      { _id: "Special Thali", count: 156 },
+      { _id: "Mini Thali", count: 98 }
+    ];
+
+    // Actual query - uncomment when you have real food orders in database
+    /* const categoryData = await Order.aggregate([
       {
         $unwind: "$cart", // Deconstruct the cart array
       },
@@ -246,7 +256,7 @@ exports.mostSellingCategory = async (req, res,next) => {
       {
         $limit: 5,
       },
-    ]);
+    ]); */
 
     res.status(200).json({ categoryData });
   } catch (error) {

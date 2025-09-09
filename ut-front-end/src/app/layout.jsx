@@ -4,8 +4,13 @@ import Providers from '@/components/provider';
 import SuppressHydrationWarning from '@/components/suppress-hydration-warning';
 
 export const metadata = {
-  title: 'Urban Thali',
-  description: 'Urban Thali',
+  title: 'Urban Thali - Order Delicious Food Online',
+  description: 'Urban Thali - Fresh and authentic Indian food delivered to your doorstep',
+  icons: {
+    icon: '/favicon.svg',
+    shortcut: '/favicon.ico',
+    apple: '/favicon.svg',
+  },
 }
 
 const body = Jost({

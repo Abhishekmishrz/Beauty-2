@@ -26,7 +26,8 @@ export default function RootLayout({children}:{children: React.ReactNode}) {
           name="viewport"
           content="width=device-width, initial-scale=1, shrink-to-fit=no"
         />
-        <link rel="icon" href="/favicon.png" />
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <link rel="alternate icon" href="/favicon.png" />
       </head>
       <body className={poppins.className}>
         <Providers>
