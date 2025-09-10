@@ -3,14 +3,38 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
 import { add_cart_product } from "@/redux/features/cartSlice";
+import { useGetAllProductsQuery } from "@/redux/features/productApi";
+import ErrorMsg from "../common/error-msg";
 
 const MenuFilterArea = () => {
   const [activeFilter, setActiveFilter] = useState('all');
   const dispatch = useDispatch();
   const { cart_products } = useSelector((state) => state.cart);
+  const { data: productsData, isError, isLoading } = useGetAllProductsQuery();
 
-  // Sample data for all menu items
-  const allMenuItems = [
+  // Get products from database
+  const dbProducts = productsData?.data || [];
+  
+  // Transform database products to menu items format
+  const databaseMenuItems = dbProducts.map(product => ({
+    id: product._id,
+    title: product.title,
+    subtitle: product.category?.name || product.parent || 'Item',
+    rating: product.rating || 4.5,
+    prepTime: product.prepTime || '20 min',
+    servings: product.servings || '2 servings',
+    price: `₹${product.price}`,
+    image: product.img,
+    description: product.description,
+    category: product.category?.name?.toLowerCase() === 'thali' ? 'thali' : 
+              product.category?.name?.toLowerCase() === 'add-ons' || 
+              product.category?.name?.toLowerCase() === 'addons' ? 'addons' : 
+              product.parent?.toLowerCase() === 'thali' ? 'thali' : 'addons',
+    cuisine: product.tags?.join(', ') || 'Indian'
+  }));
+
+  // Fallback data for when database is empty
+  const fallbackMenuItems = [
     // Thali items
     {
       id: 1,
@@ -158,6 +182,9 @@ const MenuFilterArea = () => {
     }
   ];
 
+  // Use database items if available, otherwise use fallback
+  const allMenuItems = databaseMenuItems.length > 0 ? databaseMenuItems : fallbackMenuItems;
+
   // Filter items based on active filter
   const filteredItems = allMenuItems.filter(item => {
     if (activeFilter === 'all') return true;
@@ -173,21 +200,49 @@ const MenuFilterArea = () => {
 
   const handleAddToCart = (item) => {
     // Convert price string to number (remove ₹ and convert to number)
-    const price = parseFloat(item.price.replace('₹', ''));
+    const price = typeof item.price === 'string' ? parseFloat(item.price.replace('₹', '')) : item.price;
     
     // Create cart item with required properties
     const cartItem = {
-      _id: item.id.toString(),
+      _id: item.id?.toString() || item._id,
       title: item.title,
       price: price,
       quantity: 100, // Set a high quantity for availability
-      img: item.image, // Changed from 'image' to 'img' to match cart component expectations
+      img: item.image || item.img,
       category: item.category,
       description: item.description
     };
     
     dispatch(add_cart_product(cartItem));
   };
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <section id="menu-section" className="tp-product-area grey-bg-8 pt-95 pb-80">
+        <div className="container-fluid">
+          <div className="text-center">
+            <div className="spinner-border" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // Error state
+  if (isError) {
+    return (
+      <section id="menu-section" className="tp-product-area grey-bg-8 pt-95 pb-80">
+        <div className="container-fluid">
+          <div className="text-center">
+            <ErrorMsg msg="Failed to load menu items" />
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section id="menu-section" className="tp-product-area grey-bg-8 pt-95 pb-80">
@@ -274,7 +329,7 @@ const MenuFilterArea = () => {
         {/* Menu Items Grid */}
         <div className="row" style={{ marginLeft: '0', marginRight: '0' }}>
           {filteredItems.map((item) => (
-            <div key={item.id} className="col-lg-2 col-md-3 col-sm-6 mb-30" style={{ paddingLeft: '8px', paddingRight: '8px' }}>
+            <div key={item.id || item._id} className="col-lg-2 col-md-3 col-sm-6 mb-30" style={{ paddingLeft: '8px', paddingRight: '8px' }}>
               <div className="tp-product-item-3 p-relative transition-3" style={{
                 backgroundColor: 'white',
                 borderRadius: '12px',
@@ -305,7 +360,7 @@ const MenuFilterArea = () => {
                     marginBottom: '2px',
                     color: '#1f2937'
                   }}>
-                    <Link href={`/product-details/${item.id}`} style={{color: 'inherit', textDecoration: 'none'}}>
+                    <Link href={`/product-details/${item.id || item._id}`} style={{color: 'inherit', textDecoration: 'none'}}>
                       {item.title}
                     </Link>
                   </h3>
@@ -374,7 +429,7 @@ const MenuFilterArea = () => {
                       padding: '4px 8px',
                       borderRadius: '4px'
                     }}>
-                      {item.cuisine}
+                      {item.cuisine || 'Indian'}
                     </span>
                   </div>
 

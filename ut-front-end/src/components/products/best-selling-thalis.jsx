@@ -3,17 +3,27 @@ import React from "react";
 import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
 import { add_cart_product } from "@/redux/features/cartSlice";
+import { useGetAllProductsQuery } from "@/redux/features/productApi";
+import ErrorMsg from "../common/error-msg";
 
 const BestSellingThalis = () => {
   const dispatch = useDispatch();
   const { cart_products } = useSelector((state) => state.cart);
+  const { data: productsData, isError, isLoading } = useGetAllProductsQuery();
   
   // handle add product
   const handleAddProduct = (product) => {
     dispatch(add_cart_product(product));
   };
   
-  const thaliProducts = [
+  // Filter thali products from database
+  const thaliProducts = productsData?.data?.filter(product => 
+    product.category?.name?.toLowerCase() === 'thali' || 
+    product.parent?.toLowerCase() === 'thali'
+  )?.slice(0, 5) || [];
+  
+  // Fallback products for when database is empty
+  const fallbackProducts = [
     {
       _id: "thali-1",
       id: 1,
@@ -96,6 +106,37 @@ const BestSellingThalis = () => {
     }
   ];
 
+  // Loading state
+  if (isLoading) {
+    return (
+      <section className="tp-product-area pt-95 pb-100">
+        <div className="container-fluid">
+          <div className="text-center">
+            <div className="spinner-border" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // Error state
+  if (isError) {
+    return (
+      <section className="tp-product-area pt-95 pb-100">
+        <div className="container-fluid">
+          <div className="text-center">
+            <ErrorMsg msg="Failed to load products" />
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // Use database products if available, otherwise use fallback
+  const displayProducts = thaliProducts.length > 0 ? thaliProducts : fallbackProducts;
+
   return (
     <section className="tp-product-area pt-95 pb-100" style={{marginLeft: '0', marginRight: '0', paddingLeft: '0', paddingRight: '0'}}>
       <div className="container-fluid" style={{paddingLeft: '0', paddingRight: '0'}}>
@@ -116,8 +157,8 @@ const BestSellingThalis = () => {
           <div className="col-xl-12" style={{paddingLeft: '0', paddingRight: '0'}}>
             <div className="tp-product-slider-3">
               <div className="row" style={{marginLeft: '0', marginRight: '0', gap: '15px', paddingLeft: '20px', paddingRight: '20px'}}>
-                {thaliProducts.map((product) => (
-                  <div key={product.id} className="col-lg-2 col-md-4 col-sm-6" style={{paddingLeft: '0', paddingRight: '0', flex: '1', minWidth: '200px'}}>
+                {displayProducts.map((product) => (
+                  <div key={product._id || product.id} className="col-lg-2 col-md-4 col-sm-6" style={{paddingLeft: '0', paddingRight: '0', flex: '1', minWidth: '200px'}}>
                     <div className="tp-product-item-3 p-relative transition-3 mb-30" style={{
                       backgroundColor: 'white',
                       borderRadius: '12px',
@@ -131,7 +172,7 @@ const BestSellingThalis = () => {
                         <div 
                           className="include-bg"
                           style={{
-                            backgroundImage: `url(${product.image})`,
+                            backgroundImage: `url(${product.img || product.image})`,
                             backgroundSize: 'cover',
                             backgroundPosition: 'center',
                             height: '100%',
@@ -148,7 +189,7 @@ const BestSellingThalis = () => {
                           marginBottom: '4px',
                           color: '#1f2937'
                         }}>
-                          <Link href={`/product-details/${product.id}`} style={{color: 'inherit', textDecoration: 'none'}}>
+                          <Link href={`/product-details/${product._id || product.id}`} style={{color: 'inherit', textDecoration: 'none'}}>
                             {product.title}
                           </Link>
                         </h3>
@@ -159,7 +200,7 @@ const BestSellingThalis = () => {
                           marginBottom: '8px',
                           fontWeight: '500'
                         }}>
-                          {product.subtitle}
+                          {product.subtitle || product.category?.name || 'Thali'}
                         </p>
 
                         {/* Product Details - Time and Servings only */}
@@ -170,7 +211,7 @@ const BestSellingThalis = () => {
                               <circle cx="12" cy="12" r="10"/>
                               <polyline points="12,6 12,12 16,14"/>
                             </svg>
-                            <span>{product.prepTime}</span>
+                            <span>{product.prepTime || '20 min'}</span>
                           </div>
                           
                           {/* Servings */}
@@ -181,7 +222,7 @@ const BestSellingThalis = () => {
                               <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
                               <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
                             </svg>
-                            <span>{product.servings}</span>
+                            <span>{product.servings || '2 servings'}</span>
                           </div>
                         </div>
 
