@@ -70,8 +70,8 @@ const sidebar_menu: Array<ISidebarMenus> = [
   {
     id: 9,
     icon: Setting,
-    link: "#",
-    title: "Restaurant Settings",
+    link: "/settings",
+    title: "Site Settings",
   },
   {
     id: 10,
